@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+    maven { url "https://maven.lavalink.dev/releases"}
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'dev.arbjerg:lavaplayer:2.2.3'
+    implementation("ch.qos.logback:logback-classic:1.5.6")
+    implementation("dev.lavalink.youtube:common:1.13.2")
+    implementation("net.dv8tion:JDA:5.5.1") { // replace $version with the latest version
+        // Optionally disable audio natives to reduce jar size by excluding `opus-java` and `tink`
+        // Gradle DSL:
+        // exclude module: 'opus-java' // required for encoding audio into opus, not needed if audio is already provided in opus encoding
+        // exclude module: 'tink' // required for encrypting and decrypting audio
+        // Kotlin DSL:
+        // exclude(module="opus-java") // required for encoding audio into opus, not needed if audio is already provided in opus encoding
+        // exclude(module="tink") // required for encrypting and decrypting audio
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

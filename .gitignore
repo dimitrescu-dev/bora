@@ -1,0 +1,47 @@
+# .env file
+.env
+
+# Gradle build output
+/build/
+/tmp/
+
+# IntelliJ IDEA project files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Java class files
+*.class
+
+# Exclude Gradle cache
+.gradle/
+
+# Gradle wrapper
+/gradle/wrapper/gradle-wrapper.jar
+
+# Exclude generated sources
+/generated/
+
+# Exclude local environment files
+.env
+
+# Exclude test output
+/test/
+
+# Exclude user-specific files
+*.swp
+*.swo
+
+# Exclude compiled jar/war/ear files
+*.jar
+*.war
+*.ear
+
