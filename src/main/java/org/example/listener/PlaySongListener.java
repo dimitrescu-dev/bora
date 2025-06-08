@@ -6,22 +6,30 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.clients.Music;
+import dev.lavalink.youtube.clients.Web;
+import dev.lavalink.youtube.clients.skeleton.Client;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.example.audio.LavaAudioSendHandler;
+import org.example.service.AlbumCoverService;
+
+import java.awt.*;
 
 // Listener for handling !play commands and managing audio playback
 public class PlaySongListener extends ListenerAdapter {
     private final AudioPlayerManager playerManager;
-    private final YoutubeAudioSourceManager youtubeSourceManager;
+    private final AlbumCoverService albumCoverService;
 
     public PlaySongListener() {
-        youtubeSourceManager = new YoutubeAudioSourceManager();
         playerManager = new DefaultAudioPlayerManager();
-        playerManager.registerSourceManager(youtubeSourceManager);
+        albumCoverService = new AlbumCoverService();
+        YoutubeAudioSourceManager youtubeSource = new YoutubeAudioSourceManager();
+        playerManager.registerSourceManager(youtubeSource);
         AudioSourceManagers.registerRemoteSources(playerManager);
         AudioSourceManagers.registerLocalSource(playerManager);
     }
@@ -40,8 +48,8 @@ public class PlaySongListener extends ListenerAdapter {
             AudioPlayer player = playerManager.createPlayer();
             LavaAudioSendHandler lavaHandler = new LavaAudioSendHandler(player);
             AudioSendHandler audioSendHandler = lavaHandler;
-
             audioManager.setSendingHandler(audioSendHandler);
+
             String songQuery = event.getMessage().getContentRaw().substring(6);
 
             if(songQuery.startsWith("http://") || songQuery.startsWith("https://")) {
@@ -49,12 +57,31 @@ public class PlaySongListener extends ListenerAdapter {
             }
             else {
                 System.out.println("[+] Searching for song: " + songQuery);
-                songQuery = "ytsearch:" + songQuery;
+                songQuery = "ytmsearch:" + songQuery;
             }
 
-            loadSong(songQuery,player);
+            loadSong(songQuery,player,event);
         }
 
+    }
+
+    private void playTrack(AudioPlayer player, AudioTrack track, MessageReceivedEvent event) {
+        player.playTrack(track);
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+
+        embedBuilder.setColor(Color.decode("#EAE2CE"));
+        embedBuilder.setTitle("⏯️ Now playing in " + event.getGuild().getName());
+        embedBuilder.setThumbnail(albumCoverService.getAlbumCoverUrl(track.getInfo().title,track.getInfo().author));
+
+        embedBuilder.addField(track.getInfo().title, "by " + track.getInfo().author, false);
+        embedBuilder.addBlankField(false);
+        embedBuilder.addField("Played by ",event.getAuthor().getAsMention(),true);
+        embedBuilder.addField("Track Duration",String.format("``%d : %02d``", track.getInfo().length / 60000,
+                (track.getInfo().length / 1000) % 60), true);
+        embedBuilder.addField("Position in Queue", "``" + 0 + "``", true);
+
+        System.out.println("[+] Sending embed");
+        event.getMessage().getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
     }
 
     /**
@@ -63,12 +90,12 @@ public class PlaySongListener extends ListenerAdapter {
      * @param link The link or search query for the song/playlist.
      * @param player The audio player to play the loaded track.
      */
-    private void loadSong(String link,AudioPlayer player) {
+    private void loadSong(String link,AudioPlayer player,MessageReceivedEvent event) {
         playerManager.loadItem(link, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
                 System.out.println("[+] Track loaded: " + audioTrack.getInfo().title);
-                player.playTrack(audioTrack);
+                playTrack(player, audioTrack,event);
             }
 
             @Override
@@ -78,7 +105,7 @@ public class PlaySongListener extends ListenerAdapter {
                     System.out.println("[+] Track: " + track.getInfo().title);
                 }
                 System.out.println("[+] Playing first track from playlist: " + audioPlaylist.getTracks().get(0).getInfo().title);
-                player.playTrack(audioPlaylist.getTracks().get(0));
+                playTrack(player,audioPlaylist.getTracks().get(0),event);
             }
 
             @Override
