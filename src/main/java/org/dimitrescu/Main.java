@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.dimitrescu.listener.PlayCommand;
 import org.dimitrescu.listener.SkipCommand;
+import org.dimitrescu.service.SongAutoCompleteService;
 import org.dimitrescu.util.Config;
 
 public class Main {
@@ -20,14 +21,16 @@ public class Main {
 
         api.updateCommands().addCommands(
                 Commands.slash("play","Play")
-                        .addOption(OptionType.STRING,"song","Song"),
+                        .addOption(OptionType.STRING,"song","Song",true,true),
                 Commands.slash("skip", "Skip")
         ).queue();
 
         PlayCommand playCommand = new PlayCommand(config);
         SkipCommand skipCommand =  new SkipCommand(config);
+        SongAutoCompleteService service = new SongAutoCompleteService(config);
 
         api.addEventListener(playCommand);
         api.addEventListener(skipCommand);
+        api.addEventListener(service);
     }
 }
