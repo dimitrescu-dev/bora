@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public class TrackQueueService extends AudioEventAdapter {
     private ArrayList<SongRequest> queue;
+    private SongRequest currentSong = null;
     private Config config;
 
     public TrackQueueService(Config config) {
@@ -40,10 +41,13 @@ public class TrackQueueService extends AudioEventAdapter {
     public void playFirstTrack(AudioPlayer player,SlashCommandInteractionEvent event) {
         SongRequest nextTrack = getNextTrack();
         if (nextTrack != null) {
+            currentSong = nextTrack;
             player.playTrack(nextTrack.getTrack());
             event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().sendFirstSong(nextTrack, queue.size())).queue();
         } else {
-            System.out.println("[!] No more tracks in the queue.");
+            event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().noMoreSongs(currentSong)).queue();
+            currentSong = null;
+            player.stopTrack();
         }
     }
 
@@ -51,10 +55,13 @@ public class TrackQueueService extends AudioEventAdapter {
     public void playNextTrack(AudioPlayer player) {
         SongRequest nextTrack = getNextTrack();
         if (nextTrack != null) {
+            currentSong = nextTrack;
             player.playTrack(nextTrack.getTrack());
             config.getEmbedSongMessageService().sendNowPlayingSongEmbed(nextTrack, queue.size());
         } else {
-            System.out.println("[!] No more tracks in the queue.");
+            currentSong.getSongChannel().sendMessageEmbeds(config.getEmbedSongMessageService().noMoreSongs(currentSong)).queue();
+            currentSong = null;
+            player.stopTrack();
         }
     }
 
@@ -62,5 +69,13 @@ public class TrackQueueService extends AudioEventAdapter {
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason reason) {
         System.out.println("[+] Track ended: " + track.getInfo().title + " | Reason: " + reason.name());
         playNextTrack(player);
+    }
+
+    public ArrayList<SongRequest> getQueue() {
+        return queue;
+    }
+
+    public SongRequest getCurrentSong() {
+        return currentSong;
     }
 }

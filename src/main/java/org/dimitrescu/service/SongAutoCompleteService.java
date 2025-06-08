@@ -27,8 +27,10 @@ public class SongAutoCompleteService extends ListenerAdapter {
 
     @Override
     public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
-        currentEvent = event;
-        loadSongs(event.getFocusedOption().getValue());
+        if(event.getName().equals("play")) {
+            currentEvent = event;
+            loadSongs(event.getFocusedOption().getValue());
+        }
 
     }
 

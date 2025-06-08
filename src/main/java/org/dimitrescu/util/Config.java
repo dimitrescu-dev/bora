@@ -19,7 +19,7 @@ public class Config {
     public Config() {
         playerManager = new DefaultAudioPlayerManager();
         albumCoverService = new AlbumCoverService();
-        embedSongMessageService = new EmbedMessageService();
+        embedSongMessageService = new EmbedMessageService(this);
         trackQueueService = new TrackQueueService(this);
 
         YoutubeAudioSourceManager youtubeSource = new YoutubeAudioSourceManager();
