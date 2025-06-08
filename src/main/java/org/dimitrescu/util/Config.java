@@ -6,20 +6,20 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import org.dimitrescu.service.AlbumCoverService;
-import org.dimitrescu.service.EmbedSongMessageService;
+import org.dimitrescu.service.EmbedMessageService;
 import org.dimitrescu.service.TrackQueueService;
 
 public class Config {
     private final AudioPlayerManager playerManager;
     private final AlbumCoverService albumCoverService;
     private final TrackQueueService trackQueueService;
-    private final EmbedSongMessageService embedSongMessageService;
+    private final EmbedMessageService embedSongMessageService;
     private final AudioPlayer player;
 
     public Config() {
         playerManager = new DefaultAudioPlayerManager();
         albumCoverService = new AlbumCoverService();
-        embedSongMessageService = new EmbedSongMessageService();
+        embedSongMessageService = new EmbedMessageService();
         trackQueueService = new TrackQueueService(this);
 
         YoutubeAudioSourceManager youtubeSource = new YoutubeAudioSourceManager();
@@ -43,7 +43,7 @@ public class Config {
         return trackQueueService;
     }
 
-    public EmbedSongMessageService getEmbedSongMessageService() {
+    public EmbedMessageService getEmbedSongMessageService() {
         return embedSongMessageService;
     }
 

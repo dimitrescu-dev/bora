@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.dimitrescu.audio.SongRequest;
 import org.dimitrescu.util.Config;
 
@@ -18,15 +19,15 @@ public class TrackQueueService extends AudioEventAdapter {
         queue = new ArrayList<>();
     }
 
-    public void queue(SongRequest request, AudioPlayer player) {
+    public void queue(SongRequest request, AudioPlayer player, SlashCommandInteractionEvent event) {
         queue.add(request);
 
-        if(queue.size() == 1 && player.getPlayingTrack() == null) playNextTrack(player);
-        else config.getEmbedSongMessageService().sendAddToQueue(request, queue.size());
+        if(queue.size() == 1 && player.getPlayingTrack() == null) playFirstTrack(player,event);
+        else event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().sendAddToQueue(request, queue.size())).queue();
     }
 
-    public void skip(AudioPlayer player) {
-        playNextTrack(player);
+    public void skip(AudioPlayer player,SlashCommandInteractionEvent event) {
+        playFirstTrack(player,event);
     }
 
     public SongRequest getNextTrack() {
@@ -35,6 +36,17 @@ public class TrackQueueService extends AudioEventAdapter {
         }
         return queue.remove(0);
     }
+
+    public void playFirstTrack(AudioPlayer player,SlashCommandInteractionEvent event) {
+        SongRequest nextTrack = getNextTrack();
+        if (nextTrack != null) {
+            player.playTrack(nextTrack.getTrack());
+            event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().sendFirstSong(nextTrack, queue.size())).queue();
+        } else {
+            System.out.println("[!] No more tracks in the queue.");
+        }
+    }
+
 
     public void playNextTrack(AudioPlayer player) {
         SongRequest nextTrack = getNextTrack();

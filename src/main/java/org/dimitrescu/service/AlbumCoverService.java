@@ -53,8 +53,13 @@ public class AlbumCoverService {
             throw new RuntimeException(e);
         }
 
-        String coverUrl = root.path("results").get(0).path("cover_image").asText();
-        System.out.println("[+] Cover URL: " + coverUrl);
-        return coverUrl;
+        try {
+            String coverUrl = root.path("results").get(0).path("cover_image").asText();
+            System.out.println("[+] Cover URL: " + coverUrl);
+            return coverUrl;
+        } catch (NullPointerException e) {
+            System.out.println("[-] No album cover found.");
+            return null;
+        }
     }
 }
