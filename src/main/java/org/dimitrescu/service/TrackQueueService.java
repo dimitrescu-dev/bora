@@ -44,6 +44,11 @@ public class TrackQueueService extends AudioEventAdapter {
         playFirstTrack(player,event);
     }
 
+    public void buttonSkip(AudioPlayer player) {
+        if(isLooping) currentSong = getNextTrack();
+        playNextTrack(player);
+    }
+
     public void shuffle(SlashCommandInteractionEvent event) {
         int s = queue.size();
         if(s > 0) {
@@ -64,6 +69,26 @@ public class TrackQueueService extends AudioEventAdapter {
         else event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().noMoreSongs()).queue();
     }
 
+    public void buttonShuffle() {
+        int s = queue.size();
+        if(s > 0) {
+            ArrayList<SongRequest> nq = new ArrayList<>();
+            Random random = new Random();
+
+
+            for (int i = 0; i < s; i++) {
+                int r = random.nextInt(queue.size());
+                nq.add(queue.get(r));
+                queue.remove(r);
+            }
+
+            queue = nq;
+            config.lastPlayMessage.getChannel().sendMessageEmbeds(config.getEmbedSongMessageService().shuffleSongs()).queue();
+        }
+
+        else config.lastPlayMessage.getChannel().sendMessageEmbeds(config.getEmbedSongMessageService().noMoreSongs()).queue();
+    }
+
     public SongRequest getNextTrack() {
         if (queue.isEmpty()) {
             return null;
@@ -74,6 +99,11 @@ public class TrackQueueService extends AudioEventAdapter {
     public void toggleLoop(SlashCommandInteractionEvent event) {
         isLooping = !isLooping;
         event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().loopStatus()).queue();
+    }
+
+    public void buttonToggleLoop() {
+        isLooping = !isLooping;
+        config.lastPlayMessage.getChannel().sendMessageEmbeds(config.getEmbedSongMessageService().loopStatus()).queue();
     }
 
     public void playFirstTrack(AudioPlayer player,SlashCommandInteractionEvent event) {

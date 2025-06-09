@@ -73,7 +73,7 @@ public class EmbedMessageService {
 
             embedBuilder.setColor(Color.decode("#EAE2CE"));
             embedBuilder.setTitle("❌ You are not in a voice chat.");
-            embedBuilder.setDescription("To use the command `/play`, you have to be in a voice channel.");
+            embedBuilder.setDescription("To use the command `/play` or `/leave`, you have to be in a voice channel.");
 
             return embedBuilder.build();
     }
@@ -97,23 +97,28 @@ public class EmbedMessageService {
         return embedBuilder.build();
     }
 
-    public MessageEmbed displayQueue(SlashCommandInteractionEvent event) {
+    public MessageEmbed displayQueue() {
             EmbedBuilder embedBuilder = new EmbedBuilder();
-
             embedBuilder.setColor(Color.decode("#EAE2CE"));
-            embedBuilder.setTitle("🎸  Song queue");
+            if(config.getTrackQueueService().getCurrentSong() != null && config.getTrackQueueService().getQueue().size() > 0) {
+                embedBuilder.setTitle("🎸  Song queue");
 
-            if (config.getTrackQueueService().getCurrentSong() != null)
-                embedBuilder.addField("▶️ - " + config.getTrackQueueService().getCurrentSong().getTrack().getInfo().title,
-                        "by " + config.getTrackQueueService().getCurrentSong().getTrack().getInfo().author, false);
+                if (config.getTrackQueueService().getCurrentSong() != null)
+                    embedBuilder.addField("▶️ - " + config.getTrackQueueService().getCurrentSong().getTrack().getInfo().title,
+                            "by " + config.getTrackQueueService().getCurrentSong().getTrack().getInfo().author, false);
 
 
-            for (int i = 0; i < config.getTrackQueueService().getQueue().size(); i++) {
-                SongRequest track = config.getTrackQueueService().getQueue().get(i);
-                embedBuilder.addField((i + 1) + " - " + track.getTrack().getInfo().title, "by " + track.getTrack().getInfo().author, false);
+                for (int i = 0; i < config.getTrackQueueService().getQueue().size(); i++) {
+                    SongRequest track = config.getTrackQueueService().getQueue().get(i);
+                    embedBuilder.addField((i + 1) + " - " + track.getTrack().getInfo().title, "by " + track.getTrack().getInfo().author, false);
+                }
+
             }
-
-            return embedBuilder.build();
+            else {
+                embedBuilder.setTitle("❌ There are no songs in the queue.");
+                embedBuilder.setDescription("To start playing, enter a voice channel and use `/play`.");
+            }
+                return embedBuilder.build();
     }
 
     public MessageEmbed noMoreSongs() {

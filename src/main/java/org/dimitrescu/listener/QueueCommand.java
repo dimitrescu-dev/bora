@@ -16,7 +16,7 @@ public class QueueCommand extends ListenerAdapter {
         if (event.getName().equals("queue")) {
             System.out.println("[+] Showing queue");
             event.deferReply().queue();
-            event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().displayQueue(event)).queue();
+            event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().displayQueue()).queue();
         }
     }
 

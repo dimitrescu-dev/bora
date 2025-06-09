@@ -24,7 +24,8 @@ public class Main {
                 Commands.slash("skip", "Skip the current song and play the next one in the queue"),
                 Commands.slash("queue", "Show the current song queue"),
                 Commands.slash("loop", "Toggle looping for the current song"),
-                Commands.slash("shuffle", "Shuffle the songs in the queue")
+                Commands.slash("shuffle", "Shuffle the songs in the queue"),
+                Commands.slash("leave","Leave the current channel and stop playing")
         ).queue();
 
 
@@ -32,8 +33,10 @@ public class Main {
         SkipCommand skipCommand =  new SkipCommand(config);
         QueueCommand queueCommand = new QueueCommand(config);
         LoopCommand loopCommand = new LoopCommand(config);
+        LeaveCommand leaveCommand = new LeaveCommand(config);
         ShuffleCommand shuffleCommand = new ShuffleCommand(config);
 
+        ButtonManager buttonManager = new ButtonManager(config);
         VoiceHandler voiceHandler = new VoiceHandler(config);
         SongAutoCompleteService service = new SongAutoCompleteService(config);
 
@@ -43,6 +46,8 @@ public class Main {
         api.addEventListener(skipCommand);
         api.addEventListener(loopCommand);
         api.addEventListener(queueCommand);
+        api.addEventListener(leaveCommand);
+        api.addEventListener(buttonManager);
         api.addEventListener(service);
     }
 }
