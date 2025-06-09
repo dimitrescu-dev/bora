@@ -101,6 +101,18 @@ public class TrackQueueService extends AudioEventAdapter {
         event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().loopStatus()).queue();
     }
 
+    public void togglePause(SlashCommandInteractionEvent event) {
+        System.out.println("[+] Setting player pause to : " + !config.getPlayer().isPaused());
+        config.getPlayer().setPaused(!config.getPlayer().isPaused());
+        event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().pause(!config.getPlayer().isPaused())).queue();
+    }
+
+    public void buttonTogglePause() {
+        System.out.println("[+] Setting player pause to : " + !config.getPlayer().isPaused());
+        config.getPlayer().setPaused(!config.getPlayer().isPaused());
+        config.lastPlayMessage.getChannel().sendMessageEmbeds(config.getEmbedSongMessageService().pause(!config.getPlayer().isPaused())).queue();
+    }
+
     public void buttonToggleLoop() {
         isLooping = !isLooping;
         config.lastPlayMessage.getChannel().sendMessageEmbeds(config.getEmbedSongMessageService().loopStatus()).queue();
@@ -132,7 +144,7 @@ public class TrackQueueService extends AudioEventAdapter {
     }
 
     public WebhookMessageCreateAction<Message> addPlaybackButtons(WebhookMessageCreateAction<Message> embed) {
-        embed.addActionRow(Button.secondary("skip","⏭️"),Button.secondary("shuffle","🔀"),
+        embed.addActionRow(Button.secondary("skip","⏭️"),Button.secondary("shuffle","🔀"),Button.secondary("pause","⏯️"),
                 Button.secondary("loop","🔁"),Button.secondary("queue","📃"));
         return embed;
     }

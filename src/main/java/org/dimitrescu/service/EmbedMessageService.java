@@ -44,7 +44,7 @@ public class EmbedMessageService {
     }
 
     public MessageCreateAction addPlaybackButtons(MessageCreateAction embed) {
-        embed.addActionRow(Button.secondary("skip","⏭️"),Button.secondary("shuffle","🔀"),
+        embed.addActionRow(Button.secondary("skip","⏭️"),Button.secondary("shuffle","🔀"),Button.secondary("pause","⏯️"),
                 Button.secondary("loop","🔁"),Button.secondary("queue","📃"));
         return embed;
     }
@@ -68,6 +68,21 @@ public class EmbedMessageService {
         return embedBuilder.build();
     }
 
+    public MessageEmbed pause(boolean p) {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+
+        embedBuilder.setColor(Color.decode("#EAE2CE"));
+        if(!p) {
+            embedBuilder.setTitle("⏸️ The player is now paused.");
+            embedBuilder.setDescription("To unpause again, use the pause button or the `/pause` command.");
+        } else {
+            embedBuilder.setTitle("▶️ The player is now playing.");
+            embedBuilder.setDescription("To pause again, use the pause button or the `/pause` command.");
+        }
+
+        return embedBuilder.build();
+    }
+
     public MessageEmbed userNotInVoice() {
             EmbedBuilder embedBuilder = new EmbedBuilder();
 
@@ -76,6 +91,16 @@ public class EmbedMessageService {
             embedBuilder.setDescription("To use the command `/play` or `/leave`, you have to be in a voice channel.");
 
             return embedBuilder.build();
+    }
+
+    public MessageEmbed songNotFound() {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+
+        embedBuilder.setColor(Color.decode("#EAE2CE"));
+        embedBuilder.setTitle("❌ The song you were trying to play was not found.");
+        embedBuilder.setDescription("Please recheck your spelling or try a direct link.");
+
+        return embedBuilder.build();
     }
 
     public MessageEmbed sendAddToQueue(SongRequest request, int positionInQueue) {

@@ -18,5 +18,6 @@ public class ButtonManager extends ListenerAdapter {
         else if(event.getComponentId().equals("shuffle")) config.getTrackQueueService().buttonShuffle();
         else if(event.getComponentId().equals("loop")) config.getTrackQueueService().buttonToggleLoop();
         else if(event.getComponentId().equals("queue")) event.getChannel().sendMessageEmbeds(config.getEmbedSongMessageService().displayQueue()).queue();
+        else if(event.getComponentId().equals("pause")) config.getTrackQueueService().buttonTogglePause();
     }
 }

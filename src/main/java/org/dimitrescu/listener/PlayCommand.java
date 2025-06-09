@@ -87,13 +87,13 @@ public class PlayCommand extends ListenerAdapter {
             @Override
             public void noMatches() {
                 System.out.println("[-] No matches found for: " + link);
-                // Handle no matches found
+                event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().songNotFound()).queue();
             }
 
             @Override
             public void loadFailed(FriendlyException e) {
                 System.err.println("[-] Failed to load track: " + e.getMessage());
-                // Handle loading failure
+                event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().songNotFound()).queue();
             }
         });
     }
