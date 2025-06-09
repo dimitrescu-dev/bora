@@ -88,6 +88,7 @@ public class TrackQueueService extends AudioEventAdapter {
                 });
             } else {
                 event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().noMoreSongs()).queue();
+                currentSong.getGuild().getAudioManager().closeAudioConnection();
                 currentSong = null;
                 player.stopTrack();
             }
@@ -118,6 +119,7 @@ public class TrackQueueService extends AudioEventAdapter {
             } else {
                 if(currentSong == null) currentSong = getNextTrack();
                 currentSong.getSongChannel().sendMessageEmbeds(config.getEmbedSongMessageService().noMoreSongs()).queue();
+                currentSong.getGuild().getAudioManager().closeAudioConnection();
                 currentSong = null;
                 player.stopTrack();
             }
