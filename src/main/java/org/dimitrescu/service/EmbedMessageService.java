@@ -75,22 +75,6 @@ public class EmbedMessageService {
         return embedBuilder.build();
     }
 
-    public MessageEmbed skipSong(SongRequest request, SlashCommandInteractionEvent event) {
-        AudioTrack track = request.getTrack();
-        User user = event.getUser();
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-
-        embedBuilder.setColor(Color.decode("#EAE2CE"));
-        embedBuilder.setTitle("⏯️  Song skipped in " + request.getGuild().getName());
-        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author));
-
-        embedBuilder.addField(track.getInfo().title, "by " + track.getInfo().author, false);
-        embedBuilder.addField("Skipped by ",user.getAsMention(),true);
-
-        System.out.println("[+] Sending embed");
-        return embedBuilder.build();
-    }
-
     public MessageEmbed displayQueue(SlashCommandInteractionEvent event) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
 
@@ -109,12 +93,33 @@ public class EmbedMessageService {
             return embedBuilder.build();
     }
 
-    public MessageEmbed noMoreSongs(SongRequest lastSongs) {
+    public MessageEmbed noMoreSongs() {
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
         embedBuilder.setColor(Color.decode("#EAE2CE"));
         embedBuilder.setTitle("❌ No more songs in the queue.");
         embedBuilder.setDescription("All the songs in the queue have already been played.");
+
+        return embedBuilder.build();
+    }
+
+    public MessageEmbed shuffleSongs() {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+
+        embedBuilder.setColor(Color.decode("#EAE2CE"));
+        embedBuilder.setTitle("🔀 Current queue shuffled.");
+        embedBuilder.setDescription("All the songs in the current queue have been mixed.");
+
+        return embedBuilder.build();
+    }
+
+    public MessageEmbed loopStatus() {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+
+        embedBuilder.setColor(Color.decode("#EAE2CE"));
+        embedBuilder.setTitle(config.getTrackQueueService().isLooping() ? "✅ Started looping the current song." : "❌ Stopped looping the current song.");
+        embedBuilder.setDescription(config.getTrackQueueService().isLooping() ? "The current song will be repeatedly played, indefinetly."
+                : "The next song played will be from the queue, not the loop.");
 
         return embedBuilder.build();
     }
