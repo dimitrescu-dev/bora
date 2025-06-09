@@ -2,14 +2,14 @@ package org.dimitrescu.listener;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.dimitrescu.util.Config;
+import org.dimitrescu.service.ConfigManager;
 
 public class ShuffleCommand extends ListenerAdapter {
 
-    private Config config;
+    private ConfigManager configManager;
 
-    public ShuffleCommand(Config config) {
-        this.config = config;
+    public ShuffleCommand(ConfigManager config) {
+        this.configManager = config;
     }
 
     @Override
@@ -17,7 +17,7 @@ public class ShuffleCommand extends ListenerAdapter {
         if (event.getName().equals("shuffle")) {
             System.out.println("[+] Shuffle event received");
             event.deferReply().queue();
-            config.getTrackQueueService().shuffle(event);
+            configManager.getConfig(event.getGuild()).getTrackQueueService().shuffle(event);
         }
     }
 }

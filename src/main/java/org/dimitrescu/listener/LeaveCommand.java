@@ -2,13 +2,13 @@ package org.dimitrescu.listener;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.dimitrescu.util.Config;
+import org.dimitrescu.service.ConfigManager;
 
 public class LeaveCommand extends ListenerAdapter {
-    private Config config;
+    private ConfigManager configManager;
 
-    public LeaveCommand(Config config) {
-        this.config = config;
+    public LeaveCommand(ConfigManager config) {
+        this.configManager = config;
     }
 
     @Override
@@ -17,12 +17,12 @@ public class LeaveCommand extends ListenerAdapter {
             event.deferReply().queue();
             if(event.getMember().getVoiceState().getChannel() != null) {
                 event.getGuild().getAudioManager().closeAudioConnection();
-                config.lastPlayMessage.editMessageComponents().queue();
-                config.getTrackQueueService().clearQueue();
+                configManager.getConfig(event.getGuild()).lastPlayMessage.editMessageComponents().queue();
+                configManager.getConfig(event.getGuild()).getTrackQueueService().clearQueue();
 
-                event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().noMoreSongs()).queue();
+                event.getHook().sendMessageEmbeds(configManager.getConfig(event.getGuild()).getEmbedSongMessageService().noMoreSongs()).queue();
             }
-            else event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().userNotInVoice()).queue();
+            else event.getHook().sendMessageEmbeds(configManager.getConfig(event.getGuild()).getEmbedSongMessageService().userNotInVoice()).queue();
         }
     }
 }

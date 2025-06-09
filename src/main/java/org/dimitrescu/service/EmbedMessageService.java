@@ -29,7 +29,7 @@ public class EmbedMessageService {
 
         embedBuilder.setColor(Color.decode("#EAE2CE"));
         embedBuilder.setTitle("⏯️  Playing in " + request.getGuild().getName());
-        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author,track.getInfo().uri));
+        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author,track.getInfo().uri,track));
 
         embedBuilder.addField(track.getInfo().title, "by " + track.getInfo().author, false);
         embedBuilder.addField("Played by ",user.getAsMention(),true);
@@ -56,7 +56,7 @@ public class EmbedMessageService {
 
         embedBuilder.setColor(Color.decode("#EAE2CE"));
         embedBuilder.setTitle("⏯️  Playing in " + request.getGuild().getName());
-        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author,track.getInfo().uri));
+        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author,track.getInfo().uri,track));
 
         embedBuilder.addField(track.getInfo().title, "by " + track.getInfo().author, false);
         embedBuilder.addField("Played by ",user.getAsMention(),true);
@@ -66,6 +66,16 @@ public class EmbedMessageService {
 
         System.out.println("[+] Sending embed");
         return embedBuilder.build();
+    }
+
+    public void pleaseDontUnmute() {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+
+        embedBuilder.setColor(Color.decode("#EAE2CE"));
+        embedBuilder.setTitle("🎧 Heads up! Bot is purposely deafened.");
+        embedBuilder.setDescription("I’m here just to play music – I don’t need to hear your private convos.");
+
+        config.lastPlayMessage.getChannel().sendMessageEmbeds(embedBuilder.build()).queue();
     }
 
     public MessageEmbed pause(boolean p) {
@@ -110,7 +120,7 @@ public class EmbedMessageService {
 
         embedBuilder.setColor(Color.decode("#EAE2CE"));
         embedBuilder.setTitle("⏯️  Song added to queue in " + request.getGuild().getName());
-        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author,track.getInfo().uri));
+        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author,track.getInfo().uri,track));
 
         embedBuilder.addField(track.getInfo().title, "by " + track.getInfo().author, false);
         embedBuilder.addField("Requested by ",user.getAsMention(),true);
@@ -125,7 +135,7 @@ public class EmbedMessageService {
     public MessageEmbed displayQueue() {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(Color.decode("#EAE2CE"));
-            if(config.getTrackQueueService().getCurrentSong() != null && config.getTrackQueueService().getQueue().size() > 0) {
+            if(config.getTrackQueueService().getCurrentSong() != null) {
                 embedBuilder.setTitle("🎸  Song queue");
 
                 if (config.getTrackQueueService().getCurrentSong() != null)

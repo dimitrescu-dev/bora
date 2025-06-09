@@ -6,17 +6,19 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.dimitrescu.listener.*;
+import org.dimitrescu.service.ConfigManager;
 import org.dimitrescu.service.SongAutoCompleteService;
 import org.dimitrescu.util.Config;
 
 public class Main {
     public static void main(String[] args) {
-        Config config = new Config();
+        ConfigManager config = new ConfigManager();
 
         // Build the JDA (Java Discord API) instance with the bot token and enable message content intent
         JDA api = JDABuilder.createDefault(System.getenv("DISCORD_BOT_TOKEN"))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .build();
+
 
         api.updateCommands().addCommands(
                 Commands.slash("play", "Play a song or add it to the queue")

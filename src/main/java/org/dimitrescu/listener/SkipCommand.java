@@ -2,13 +2,13 @@ package org.dimitrescu.listener;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.dimitrescu.util.Config;
+import org.dimitrescu.service.ConfigManager;
 
 public class SkipCommand extends ListenerAdapter {
-    private Config config;
+    private ConfigManager configManager;
 
-    public SkipCommand(Config config) {
-        this.config = config;
+    public SkipCommand(ConfigManager config) {
+        this.configManager = config;
     }
 
     @Override
@@ -16,7 +16,7 @@ public class SkipCommand extends ListenerAdapter {
         if(event.getName().equals("skip")) {
             event.deferReply().queue();
             System.out.println("[+] Skipping current song");
-            config.getTrackQueueService().skip(config.getPlayer(),event);
+            configManager.getConfig(event.getGuild()).getTrackQueueService().skip(configManager.getConfig(event.getGuild()).getPlayer(),event);
         }
     }
 

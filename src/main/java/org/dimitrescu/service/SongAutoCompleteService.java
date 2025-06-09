@@ -4,30 +4,28 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
-import org.dimitrescu.util.Config;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SongAutoCompleteService extends ListenerAdapter {
-    private Config config;
+    private ConfigManager configManager;
     private String[] autoCompleteSongs;
     private CommandAutoCompleteInteractionEvent currentEvent;
 
-    public SongAutoCompleteService(Config config) {
-        this.config = config;
+    public SongAutoCompleteService(ConfigManager config) {
+        this.configManager = config;
     }
 
     @Override
     public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
         if(event.getName().equals("play")) {
             currentEvent = event;
-            loadSongs(event.getFocusedOption().getValue());
+            loadSongs(event.getFocusedOption().getValue(),event.getGuild());
         }
 
     }
@@ -40,8 +38,8 @@ public class SongAutoCompleteService extends ListenerAdapter {
         }
     }
 
-    private void loadSongs(String currentString) {
-        config.getPlayerManager().loadItem("ytmsearch:" + currentString, new AudioLoadResultHandler() {
+    private void loadSongs(String currentString, Guild guild) {
+        configManager.getConfig(guild).getPlayerManager().loadItem("ytmsearch:" + currentString, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
 

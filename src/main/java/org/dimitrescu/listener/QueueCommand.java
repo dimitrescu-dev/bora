@@ -2,13 +2,13 @@ package org.dimitrescu.listener;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.dimitrescu.util.Config;
+import org.dimitrescu.service.ConfigManager;
 
 public class QueueCommand extends ListenerAdapter {
-    private Config config;
+    private ConfigManager configManager;
 
-    public QueueCommand(Config config) {
-        this.config = config;
+    public QueueCommand(ConfigManager config) {
+        this.configManager = config;
     }
 
     @Override
@@ -16,7 +16,7 @@ public class QueueCommand extends ListenerAdapter {
         if (event.getName().equals("queue")) {
             System.out.println("[+] Showing queue");
             event.deferReply().queue();
-            event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().displayQueue()).queue();
+            event.getHook().sendMessageEmbeds(configManager.getConfig(event.getGuild()).getEmbedSongMessageService().displayQueue()).queue();
         }
     }
 

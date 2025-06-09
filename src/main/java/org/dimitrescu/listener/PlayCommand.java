@@ -7,22 +7,20 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.dimitrescu.audio.LavaAudioSendHandler;
 import org.dimitrescu.audio.SongRequest;
+import org.dimitrescu.service.ConfigManager;
 import org.dimitrescu.service.TrackQueueService;
-import org.dimitrescu.util.Config;
 
 // Listener for handling !play commands and managing audio playback
 public class PlayCommand extends ListenerAdapter {
-    private Config config;
+    private ConfigManager configManager;
 
 
-    public PlayCommand(Config config) {
-        this.config = config;
+    public PlayCommand(ConfigManager config) {
+        this.configManager = config;
     }
 
 
@@ -34,10 +32,10 @@ public class PlayCommand extends ListenerAdapter {
             AudioManager audioManager = guild.getAudioManager();
             if (event.getMember().getVoiceState().getChannel() != null) {
                 audioManager.openAudioConnection(event.getMember().getVoiceState().getChannel());
-                config.currentChannel = event.getMember().getVoiceState().getChannel();
+                configManager.getConfig(event.getGuild()).currentChannel = event.getMember().getVoiceState().getChannel();
 
 
-                LavaAudioSendHandler lavaHandler = new LavaAudioSendHandler(config.getPlayer());
+                LavaAudioSendHandler lavaHandler = new LavaAudioSendHandler(configManager.getConfig(event.getGuild()).getPlayer());
                 AudioSendHandler audioSendHandler = lavaHandler;
                 audioManager.setSendingHandler(audioSendHandler);
 
@@ -49,18 +47,18 @@ public class PlayCommand extends ListenerAdapter {
                     System.out.println("[+] Searching for song: " + songQuery);
                     songQuery = "ytmsearch:" + songQuery;
                 }
-
-                loadSong(songQuery, config.getPlayer(), event);
+                loadSong(songQuery, configManager.getConfig(event.getGuild()).getPlayer(), event);
+                guild.getSelfMember().deafen(true).queue();
             }
             else {
                 //user who called /play not in voice
-                event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().userNotInVoice()).queue();
+                event.getHook().sendMessageEmbeds(configManager.getConfig(event.getGuild()).getEmbedSongMessageService().userNotInVoice()).queue();
             }
         }
     }
 
     private void playTrack(AudioPlayer player, AudioTrack track, SlashCommandInteractionEvent event) {
-        config.getTrackQueueService().queue(new SongRequest(event.getUser(), track, event.getChannel(), event.getGuild()), player, event);
+        configManager.getConfig(event.getGuild()).getTrackQueueService().queue(new SongRequest(event.getUser(), track, event.getChannel(), event.getGuild()), player, event);
     }
 
     /**
@@ -70,7 +68,7 @@ public class PlayCommand extends ListenerAdapter {
      * @param player The audio player to play the loaded track.
      */
     private void loadSong(String link, AudioPlayer player, SlashCommandInteractionEvent event) {
-        config.getPlayerManager().loadItem(link, new AudioLoadResultHandler() {
+        configManager.getConfig(event.getGuild()).getPlayerManager().loadItem(link, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
                 System.out.println("[+] Track loaded: " + audioTrack.getInfo().title);
@@ -87,18 +85,18 @@ public class PlayCommand extends ListenerAdapter {
             @Override
             public void noMatches() {
                 System.out.println("[-] No matches found for: " + link);
-                event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().songNotFound()).queue();
+                event.getHook().sendMessageEmbeds(configManager.getConfig(event.getGuild()).getEmbedSongMessageService().songNotFound()).queue();
             }
 
             @Override
             public void loadFailed(FriendlyException e) {
                 System.err.println("[-] Failed to load track: " + e.getMessage());
-                event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().songNotFound()).queue();
+                event.getHook().sendMessageEmbeds(configManager.getConfig(event.getGuild()).getEmbedSongMessageService().songNotFound()).queue();
             }
         });
     }
 
-    public TrackQueueService getTrackQueueService() {
-        return config.getTrackQueueService();
+    public TrackQueueService getTrackQueueService(Guild g) {
+        return configManager.getConfig(g).getTrackQueueService();
     }
 }
