@@ -15,6 +15,7 @@ public class ShuffleCommand extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getName().equals("shuffle")) {
+            System.out.println("[+] Shuffle event received");
             event.deferReply().queue();
             config.getTrackQueueService().shuffle(event);
         }

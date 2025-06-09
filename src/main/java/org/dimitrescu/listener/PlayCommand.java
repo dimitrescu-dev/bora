@@ -32,23 +32,30 @@ public class PlayCommand extends ListenerAdapter {
             event.deferReply().queue();
             Guild guild = event.getGuild();
             AudioManager audioManager = guild.getAudioManager();
-            audioManager.openAudioConnection(event.getMember().getVoiceState().getChannel());
+            if (event.getMember().getVoiceState().getChannel() != null) {
+                audioManager.openAudioConnection(event.getMember().getVoiceState().getChannel());
+                config.currentChannel = event.getMember().getVoiceState().getChannel();
 
 
-            LavaAudioSendHandler lavaHandler = new LavaAudioSendHandler(config.getPlayer());
-            AudioSendHandler audioSendHandler = lavaHandler;
-            audioManager.setSendingHandler(audioSendHandler);
+                LavaAudioSendHandler lavaHandler = new LavaAudioSendHandler(config.getPlayer());
+                AudioSendHandler audioSendHandler = lavaHandler;
+                audioManager.setSendingHandler(audioSendHandler);
 
-            String songQuery = event.getOption("song").getAsString();
+                String songQuery = event.getOption("song").getAsString();
 
-            if (songQuery.startsWith("http://") || songQuery.startsWith("https://")) {
-                System.out.println("[+] Playing song from link: " + songQuery);
-            } else {
-                System.out.println("[+] Searching for song: " + songQuery);
-                songQuery = "ytmsearch:" + songQuery;
+                if (songQuery.startsWith("http://") || songQuery.startsWith("https://")) {
+                    System.out.println("[+] Playing song from link: " + songQuery);
+                } else {
+                    System.out.println("[+] Searching for song: " + songQuery);
+                    songQuery = "ytmsearch:" + songQuery;
+                }
+
+                loadSong(songQuery, config.getPlayer(), event);
             }
-
-            loadSong(songQuery, config.getPlayer(), event);
+            else {
+                //user who called /play not in voice
+                event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().userNotInVoice()).queue();
+            }
         }
     }
 

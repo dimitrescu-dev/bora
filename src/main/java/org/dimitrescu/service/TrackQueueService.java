@@ -4,7 +4,10 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 import org.dimitrescu.audio.SongRequest;
 import org.dimitrescu.util.Config;
 
@@ -28,6 +31,12 @@ public class TrackQueueService extends AudioEventAdapter {
 
         if(queue.size() == 1 && player.getPlayingTrack() == null && currentSong == null) playFirstTrack(player,event);
         else event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().sendAddToQueue(request, queue.size())).queue();
+    }
+
+    public void clearQueue() {
+        currentSong = null;
+        config.getPlayer().stopTrack();
+        queue.clear();
     }
 
     public void skip(AudioPlayer player,SlashCommandInteractionEvent event) {
@@ -68,12 +77,15 @@ public class TrackQueueService extends AudioEventAdapter {
     }
 
     public void playFirstTrack(AudioPlayer player,SlashCommandInteractionEvent event) {
+        if(config.lastPlayMessage != null) config.lastPlayMessage.editMessageComponents().queue();
         if(!isLooping) {
             SongRequest nextTrack = getNextTrack();
             if (nextTrack != null) {
                 currentSong = nextTrack;
                 player.playTrack(nextTrack.getTrack());
-                event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().sendFirstSong(nextTrack, queue.size())).queue();
+                addPlaybackButtons(event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().sendFirstSong(nextTrack, queue.size()))).queue(message -> {
+                    config.lastPlayMessage = message;
+                });
             } else {
                 event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().noMoreSongs()).queue();
                 currentSong = null;
@@ -81,19 +93,28 @@ public class TrackQueueService extends AudioEventAdapter {
             }
         } else {
             if(currentSong == null) currentSong = getNextTrack();
-            event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().sendFirstSong(currentSong, queue.size())).queue();
+            addPlaybackButtons(event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().sendFirstSong(currentSong,queue.size()))).queue(message -> {
+                config.lastPlayMessage = message;
+            });
             player.playTrack(currentSong.getTrack().makeClone());
         }
     }
 
+    public WebhookMessageCreateAction<Message> addPlaybackButtons(WebhookMessageCreateAction<Message> embed) {
+        embed.addActionRow(Button.secondary("skip","⏭️"),Button.secondary("shuffle","🔀"),
+                Button.secondary("loop","🔁"),Button.secondary("queue","📃"));
+        return embed;
+    }
+
 
     public void playNextTrack(AudioPlayer player) {
+        if(config.lastPlayMessage != null) config.lastPlayMessage.editMessageComponents().queue();
         if(!isLooping) {
         SongRequest nextTrack = getNextTrack();
             if (nextTrack != null) {
                 currentSong = nextTrack;
                 player.playTrack(nextTrack.getTrack());
-                config.getEmbedSongMessageService().sendNowPlayingSongEmbed(nextTrack, queue.size());
+                 config.getEmbedSongMessageService().sendNowPlayingSongEmbed(nextTrack, queue.size());
             } else {
                 if(currentSong == null) currentSong = getNextTrack();
                 currentSong.getSongChannel().sendMessageEmbeds(config.getEmbedSongMessageService().noMoreSongs()).queue();

@@ -6,6 +6,8 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.YoutubeSource;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import org.dimitrescu.service.AlbumCoverService;
 import org.dimitrescu.service.EmbedMessageService;
 import org.dimitrescu.service.TrackQueueService;
@@ -16,6 +18,8 @@ public class Config {
     private final TrackQueueService trackQueueService;
     private final EmbedMessageService embedSongMessageService;
     private final AudioPlayer player;
+    public AudioChannelUnion currentChannel = null;
+    public Message lastPlayMessage = null;
 
     public Config() {
         playerManager = new DefaultAudioPlayerManager();

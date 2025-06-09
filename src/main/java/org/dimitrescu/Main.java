@@ -33,10 +33,13 @@ public class Main {
         QueueCommand queueCommand = new QueueCommand(config);
         LoopCommand loopCommand = new LoopCommand(config);
         ShuffleCommand shuffleCommand = new ShuffleCommand(config);
+
+        VoiceHandler voiceHandler = new VoiceHandler(config);
         SongAutoCompleteService service = new SongAutoCompleteService(config);
 
         api.addEventListener(playCommand);
         api.addEventListener(shuffleCommand);
+        api.addEventListener(voiceHandler);
         api.addEventListener(skipCommand);
         api.addEventListener(loopCommand);
         api.addEventListener(queueCommand);

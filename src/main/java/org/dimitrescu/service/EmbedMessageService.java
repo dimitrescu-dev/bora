@@ -2,9 +2,13 @@ package org.dimitrescu.service;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 import org.dimitrescu.audio.SongRequest;
 import org.dimitrescu.util.Config;
 
@@ -24,7 +28,7 @@ public class EmbedMessageService {
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
         embedBuilder.setColor(Color.decode("#EAE2CE"));
-        embedBuilder.setTitle("⏯️  Now playing in " + request.getGuild().getName());
+        embedBuilder.setTitle("⏯️  Playing in " + request.getGuild().getName());
         embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author,track.getInfo().uri));
 
         embedBuilder.addField(track.getInfo().title, "by " + track.getInfo().author, false);
@@ -34,7 +38,15 @@ public class EmbedMessageService {
         embedBuilder.addField("Songs in Queue", "``" + queueSize + "``", true);
 
         System.out.println("[+] Sending embed");
-        request.getSongChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+        addPlaybackButtons(request.getSongChannel().sendMessageEmbeds(embedBuilder.build())).queue(message -> {
+            config.lastPlayMessage = message;
+        });
+    }
+
+    public MessageCreateAction addPlaybackButtons(MessageCreateAction embed) {
+        embed.addActionRow(Button.secondary("skip","⏭️"),Button.secondary("shuffle","🔀"),
+                Button.secondary("loop","🔁"),Button.secondary("queue","📃"));
+        return embed;
     }
 
     public MessageEmbed sendFirstSong(SongRequest request, int queueSize) {
@@ -43,7 +55,7 @@ public class EmbedMessageService {
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
         embedBuilder.setColor(Color.decode("#EAE2CE"));
-        embedBuilder.setTitle("⏯️  Now playing in " + request.getGuild().getName());
+        embedBuilder.setTitle("⏯️  Playing in " + request.getGuild().getName());
         embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author,track.getInfo().uri));
 
         embedBuilder.addField(track.getInfo().title, "by " + track.getInfo().author, false);
@@ -54,6 +66,16 @@ public class EmbedMessageService {
 
         System.out.println("[+] Sending embed");
         return embedBuilder.build();
+    }
+
+    public MessageEmbed userNotInVoice() {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+
+            embedBuilder.setColor(Color.decode("#EAE2CE"));
+            embedBuilder.setTitle("❌ You are not in a voice chat.");
+            embedBuilder.setDescription("To use the command `/play`, you have to be in a voice channel.");
+
+            return embedBuilder.build();
     }
 
     public MessageEmbed sendAddToQueue(SongRequest request, int positionInQueue) {
