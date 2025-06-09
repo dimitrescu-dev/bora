@@ -3,7 +3,6 @@ package org.dimitrescu.listener;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.dimitrescu.service.ConfigManager;
-import org.dimitrescu.util.Config;
 
 public class ButtonManager extends ListenerAdapter {
     private ConfigManager configManager;
@@ -20,5 +19,6 @@ public class ButtonManager extends ListenerAdapter {
         else if(event.getComponentId().equals("loop")) configManager.getConfig(event.getGuild()).getTrackQueueService().buttonToggleLoop();
         else if(event.getComponentId().equals("queue")) event.getChannel().sendMessageEmbeds(configManager.getConfig(event.getGuild()).getEmbedSongMessageService().displayQueue()).queue();
         else if(event.getComponentId().equals("pause")) configManager.getConfig(event.getGuild()).getTrackQueueService().buttonTogglePause();
+        else if(event.getComponentId().equals("ai")) configManager.getConfig(event.getGuild()).getTrackQueueService().buttonGetAi();
     }
 }

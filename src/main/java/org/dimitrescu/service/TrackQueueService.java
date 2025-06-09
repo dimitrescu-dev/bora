@@ -1,7 +1,10 @@
 package org.dimitrescu.service;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import net.dv8tion.jda.api.entities.Message;
@@ -17,11 +20,13 @@ import java.util.Random;
 public class TrackQueueService extends AudioEventAdapter {
     private ArrayList<SongRequest> queue;
     private SongRequest currentSong = null;
+    private AIRadioService radioService;
     private Config config;
 
     private boolean isLooping = false;
 
     public TrackQueueService(Config config) {
+        radioService = new AIRadioService();
         this.config = config;
         queue = new ArrayList<>();
     }
@@ -101,6 +106,22 @@ public class TrackQueueService extends AudioEventAdapter {
         event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().loopStatus()).queue();
     }
 
+    public void buttonGetAi() {
+        for(String song : radioService.getAiSongRecommendations(queue,currentSong)) {
+            loadSong(song);
+        }
+        currentSong.getSongChannel().sendMessageEmbeds(config.getEmbedSongMessageService().addedAiSongs(radioService.getAiSongRecommendations(queue,currentSong))).queue();
+    }
+
+    public void getAi(SlashCommandInteractionEvent event) {
+        for(String song : radioService.getAiSongRecommendations(queue,currentSong)) {
+            loadSong(song);
+        }
+        event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().addedAiSongs(radioService.getAiSongRecommendations(queue,currentSong))).queue();
+    }
+
+
+
     public void togglePause(SlashCommandInteractionEvent event) {
         System.out.println("[+] Setting player pause to : " + !config.getPlayer().isPaused());
         config.getPlayer().setPaused(!config.getPlayer().isPaused());
@@ -144,8 +165,8 @@ public class TrackQueueService extends AudioEventAdapter {
     }
 
     public WebhookMessageCreateAction<Message> addPlaybackButtons(WebhookMessageCreateAction<Message> embed) {
-        embed.addActionRow(Button.secondary("skip","⏭️"),Button.secondary("shuffle","🔀"),Button.secondary("pause","⏯️"),
-                Button.secondary("loop","🔁"),Button.secondary("queue","📃"));
+        embed.addActionRow(Button.secondary("skip","⏭️"),Button.secondary("shuffle","🔀"),Button.secondary("pause","⏯️"));
+        embed.addActionRow(Button.secondary("ai","🤖"),Button.secondary("loop","🔁"),Button.secondary("queue","📃"));
         return embed;
     }
 
@@ -176,6 +197,28 @@ public class TrackQueueService extends AudioEventAdapter {
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason reason) {
         System.out.println("[+] Track ended: " + track.getInfo().title + " | Reason: " + reason.name());
         if(reason.name().equals("FINISHED")) playNextTrack(player);
+    }
+
+    private void loadSong(String songName) {
+        config.getPlayerManager().loadItem("ytmsearch:" + songName, new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack audioTrack) {
+
+            }
+
+            @Override
+            public void playlistLoaded(AudioPlaylist audioPlaylist) {
+                queue.add(new SongRequest(currentSong.getGuild().getJDA().getSelfUser(),audioPlaylist.getTracks().get(0),currentSong.getSongChannel(),currentSong.getGuild()));
+            }
+
+            @Override
+            public void noMatches() {
+            }
+
+            @Override
+            public void loadFailed(FriendlyException e) {
+            }
+        });
     }
 
     public ArrayList<SongRequest> getQueue() {

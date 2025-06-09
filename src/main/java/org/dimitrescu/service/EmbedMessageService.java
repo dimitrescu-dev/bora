@@ -2,17 +2,15 @@ package org.dimitrescu.service;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
-import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 import org.dimitrescu.audio.SongRequest;
 import org.dimitrescu.util.Config;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class EmbedMessageService {
 
@@ -43,10 +41,19 @@ public class EmbedMessageService {
         });
     }
 
+    public MessageEmbed addedAiSongs(String[] songs) {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setColor(Color.decode("#EAE2CE"));
+            embedBuilder.setTitle("🎸  Bora AI Added following songs to the queue:");
+
+        System.out.println(Arrays.toString(songs));
+            for (String s : songs) embedBuilder.addField(s.split("%")[1],s.split("%")[0], false);
+            return embedBuilder.build();
+    }
+
     public MessageCreateAction addPlaybackButtons(MessageCreateAction embed) {
-        embed.addActionRow(Button.secondary("skip","⏭️"),Button.secondary("shuffle","🔀"),Button.secondary("pause","⏯️"),
-                Button.secondary("loop","🔁"),Button.secondary("queue","📃"));
-        return embed;
+        embed.addActionRow(Button.secondary("skip","⏭️"),Button.secondary("shuffle","🔀"),Button.secondary("pause","⏯️"));
+        embed.addActionRow(Button.secondary("ai","🤖"),Button.secondary("loop","🔁"),Button.secondary("queue","📃"));return embed;
     }
 
     public MessageEmbed sendFirstSong(SongRequest request, int queueSize) {

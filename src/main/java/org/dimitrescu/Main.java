@@ -28,7 +28,8 @@ public class Main {
                 Commands.slash("loop", "Toggle looping for the current song"),
                 Commands.slash("shuffle", "Shuffle the songs in the queue"),
                 Commands.slash("leave","Leave the current channel and stop playing"),
-                Commands.slash("pause", "Pause/Unpause the current song")
+                Commands.slash("pause", "Pause/Unpause the current song"),
+                Commands.slash("ai","Use Bora AI to enhance your current queue")
         ).queue();
 
 
@@ -39,6 +40,7 @@ public class Main {
         PauseCommand pauseCommand = new PauseCommand(config);
         LeaveCommand leaveCommand = new LeaveCommand(config);
         ShuffleCommand shuffleCommand = new ShuffleCommand(config);
+        AICommand aiCommand = new AICommand(config);
 
         ButtonManager buttonManager = new ButtonManager(config);
         VoiceHandler voiceHandler = new VoiceHandler(config);
@@ -47,6 +49,7 @@ public class Main {
         api.addEventListener(playCommand);
         api.addEventListener(shuffleCommand);
         api.addEventListener(voiceHandler);
+        api.addEventListener(aiCommand);
         api.addEventListener(skipCommand);
         api.addEventListener(loopCommand);
         api.addEventListener(queueCommand);

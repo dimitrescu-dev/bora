@@ -33,4 +33,9 @@ public class SongRequest {
     public Guild getGuild() {
         return guild;
     }
+
+    @Override
+    public String toString() {
+        return track.getInfo().author + " - " + track.getInfo().title;
+    }
 }
