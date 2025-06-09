@@ -19,13 +19,14 @@ public class Main {
                 .build();
 
         api.updateCommands().addCommands(
-                Commands.slash("play","Play")
-                        .addOption(OptionType.STRING,"song","Song",true,true),
-                Commands.slash("skip", "Skip"),
-                Commands.slash("queue","Queue"),
-                Commands.slash("loop","Loop"),
-                Commands.slash("shuffle", "Shuffle")
+                Commands.slash("play", "Play a song or add it to the queue")
+                        .addOption(OptionType.STRING, "song", "The name or URL of the song to play", true, true),
+                Commands.slash("skip", "Skip the current song and play the next one in the queue"),
+                Commands.slash("queue", "Show the current song queue"),
+                Commands.slash("loop", "Toggle looping for the current song"),
+                Commands.slash("shuffle", "Shuffle the songs in the queue")
         ).queue();
+
 
         PlayCommand playCommand = new PlayCommand(config);
         SkipCommand skipCommand =  new SkipCommand(config);

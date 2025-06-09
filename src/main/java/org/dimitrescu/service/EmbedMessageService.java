@@ -25,7 +25,7 @@ public class EmbedMessageService {
 
         embedBuilder.setColor(Color.decode("#EAE2CE"));
         embedBuilder.setTitle("⏯️  Now playing in " + request.getGuild().getName());
-        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author));
+        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author,track.getInfo().uri));
 
         embedBuilder.addField(track.getInfo().title, "by " + track.getInfo().author, false);
         embedBuilder.addField("Played by ",user.getAsMention(),true);
@@ -44,7 +44,7 @@ public class EmbedMessageService {
 
         embedBuilder.setColor(Color.decode("#EAE2CE"));
         embedBuilder.setTitle("⏯️  Now playing in " + request.getGuild().getName());
-        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author));
+        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author,track.getInfo().uri));
 
         embedBuilder.addField(track.getInfo().title, "by " + track.getInfo().author, false);
         embedBuilder.addField("Played by ",user.getAsMention(),true);
@@ -63,7 +63,7 @@ public class EmbedMessageService {
 
         embedBuilder.setColor(Color.decode("#EAE2CE"));
         embedBuilder.setTitle("⏯️  Song added to queue in " + request.getGuild().getName());
-        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author));
+        embedBuilder.setThumbnail(config.getAlbumCoverService().getAlbumCoverUrl(track.getInfo().title,track.getInfo().author,track.getInfo().uri));
 
         embedBuilder.addField(track.getInfo().title, "by " + track.getInfo().author, false);
         embedBuilder.addField("Requested by ",user.getAsMention(),true);
@@ -79,15 +79,16 @@ public class EmbedMessageService {
             EmbedBuilder embedBuilder = new EmbedBuilder();
 
             embedBuilder.setColor(Color.decode("#EAE2CE"));
-            embedBuilder.setTitle("Song queue, requested by " + event.getMember().getAsMention());
+            embedBuilder.setTitle("🎸  Song queue");
 
             if (config.getTrackQueueService().getCurrentSong() != null)
-                embedBuilder.addField("1 - " + config.getTrackQueueService().getCurrentSong().getTrack().getInfo().title,
+                embedBuilder.addField("▶️ - " + config.getTrackQueueService().getCurrentSong().getTrack().getInfo().title,
                         "by " + config.getTrackQueueService().getCurrentSong().getTrack().getInfo().author, false);
+
 
             for (int i = 0; i < config.getTrackQueueService().getQueue().size(); i++) {
                 SongRequest track = config.getTrackQueueService().getQueue().get(i);
-                embedBuilder.addField((i + 2) + " - " + track.getTrack().getInfo().title, "by " + track.getTrack().getInfo().author, false);
+                embedBuilder.addField((i + 1) + " - " + track.getTrack().getInfo().title, "by " + track.getTrack().getInfo().author, false);
             }
 
             return embedBuilder.build();

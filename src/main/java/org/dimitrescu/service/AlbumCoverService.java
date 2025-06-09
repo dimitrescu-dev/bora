@@ -16,13 +16,12 @@ public class AlbumCoverService {
     public AlbumCoverService() {
     }
 
-    public String getAlbumCoverUrl(String songName,String artistName) {
+    public String getAlbumCoverUrl(String songName,String artistName,String youtubeLink) {
         String url = "https://api.discogs.com/database/search?q=";
         String token = "&token=" + URLEncoder.encode(System.getenv("DISCOGS_API_TOKEN"),StandardCharsets.UTF_8);
         String encodedSongName = URLEncoder.encode(songName.replaceAll("\\s*\\([^)]*\\)", "").trim(), StandardCharsets.UTF_8);
         String encodedArtistName =  URLEncoder.encode(artistName,StandardCharsets.UTF_8);
 
-        //String queryURL = url + encodedArtistName + "+" + encodedSongName + "&title=" + encodedSongName + "&artist=" + encodedArtistName + token;
         String queryURL = url + encodedArtistName + "+" + encodedSongName +  token;
 
         System.out.println("[+] Querying Discogs API with URL: " + queryURL);
@@ -58,8 +57,9 @@ public class AlbumCoverService {
             System.out.println("[+] Cover URL: " + coverUrl);
             return coverUrl;
         } catch (NullPointerException e) {
-            System.out.println("[-] No album cover found.");
-            return null;
+            System.out.println("[-] No album cover found,resorting to default youtube thumbnail");
+            String id = youtubeLink.contains("v=") ? youtubeLink.split("v=")[1].split("&")[0] : youtubeLink.substring(youtubeLink.lastIndexOf("/") + 1);
+            return "https://img.youtube.com/vi/" + id + "/hqdefault.jpg";
         }
     }
 }
