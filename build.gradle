@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 jar {
@@ -36,4 +37,10 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+shadowJar {
+    archiveBaseName.set('riffy')
+    archiveVersion.set('1.0-SNAPSHOT')
+    archiveClassifier.set('')
 }
