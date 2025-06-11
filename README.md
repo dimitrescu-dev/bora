@@ -35,6 +35,21 @@ Type these in your server:
 
 ---
 
+## Environment Variables
+
+To run Bora, you need to create a `.env` file in the root directory with these keys:
+
+```
+DISCORD_BOT_TOKEN="your-discord-bot-token"
+DISCOGS_API_TOKEN="your-discogs-api-token"
+GEMINI_AI_KEY="your-gemini-ai-key"
+```
+
+
+Replace the placeholder values with your actual tokens.  
+
+---
+
 ## 🤝 Contributing
 
 1. Fork it  
