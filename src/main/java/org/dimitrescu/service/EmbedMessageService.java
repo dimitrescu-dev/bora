@@ -53,7 +53,7 @@ public class EmbedMessageService {
 
     public MessageCreateAction addPlaybackButtons(MessageCreateAction embed) {
         embed.addActionRow(Button.secondary("skip","⏭️"),Button.secondary("shuffle","🔀"),Button.secondary("pause","⏯️"));
-        embed.addActionRow(Button.secondary("ai","🤖"),Button.secondary("loop","🔁"),Button.secondary("queue","📃"));return embed;
+        embed.addActionRow(Button.secondary("aiplaylist","🤖"),Button.secondary("loop","🔁"),Button.secondary("queue","📃"));return embed;
     }
 
     public MessageEmbed sendFirstSong(SongRequest request, int queueSize) {

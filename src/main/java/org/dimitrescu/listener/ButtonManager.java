@@ -19,6 +19,6 @@ public class ButtonManager extends ListenerAdapter {
         else if(event.getComponentId().equals("loop")) configManager.getConfig(event.getGuild()).getTrackQueueService().buttonToggleLoop();
         else if(event.getComponentId().equals("queue")) event.getChannel().sendMessageEmbeds(configManager.getConfig(event.getGuild()).getEmbedSongMessageService().displayQueue()).queue();
         else if(event.getComponentId().equals("pause")) configManager.getConfig(event.getGuild()).getTrackQueueService().buttonTogglePause();
-        else if(event.getComponentId().equals("ai")) configManager.getConfig(event.getGuild()).getTrackQueueService().buttonGetAi();
+        else if(event.getComponentId().equals("aiplaylist")) configManager.getConfig(event.getGuild()).getTrackQueueService().buttonGetAi();
     }
 }

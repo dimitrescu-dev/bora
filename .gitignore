@@ -38,7 +38,6 @@ Thumbs.db
 *.swo
 
 # Exclude compiled jar/war/ear files
-*.jar
 *.war
 *.ear
 

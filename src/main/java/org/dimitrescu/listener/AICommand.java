@@ -13,7 +13,7 @@ public class AICommand extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        if(event.getName().equals("ai")) {
+        if(event.getName().equals("aiplaylist")) {
             event.deferReply().queue();
             if(configManager.getConfig(event.getGuild()).getTrackQueueService().getCurrentSong() != null) {
                 configManager.getConfig(event.getGuild()).getTrackQueueService()

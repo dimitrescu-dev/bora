@@ -166,7 +166,7 @@ public class TrackQueueService extends AudioEventAdapter {
 
     public WebhookMessageCreateAction<Message> addPlaybackButtons(WebhookMessageCreateAction<Message> embed) {
         embed.addActionRow(Button.secondary("skip","⏭️"),Button.secondary("shuffle","🔀"),Button.secondary("pause","⏯️"));
-        embed.addActionRow(Button.secondary("ai","🤖"),Button.secondary("loop","🔁"),Button.secondary("queue","📃"));
+        embed.addActionRow(Button.secondary("aiplaylist","🤖"),Button.secondary("loop","🔁"),Button.secondary("queue","📃"));
         return embed;
     }
 

@@ -2,6 +2,8 @@ package org.dimitrescu;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -20,6 +22,7 @@ public class Main {
                 .build();
 
 
+
         api.updateCommands().addCommands(
                 Commands.slash("play", "Play a song or add it to the queue")
                         .addOption(OptionType.STRING, "song", "The name or URL of the song to play", true, true),
@@ -29,7 +32,7 @@ public class Main {
                 Commands.slash("shuffle", "Shuffle the songs in the queue"),
                 Commands.slash("leave","Leave the current channel and stop playing"),
                 Commands.slash("pause", "Pause/Unpause the current song"),
-                Commands.slash("ai","Use Bora AI to enhance your current queue")
+                Commands.slash("aiplaylist","Use Bora AI to enhance your current queue")
         ).queue();
 
 
@@ -57,5 +60,12 @@ public class Main {
         api.addEventListener(pauseCommand);
         api.addEventListener(buttonManager);
         api.addEventListener(service);
+
+        try {
+            api.getPresence().setActivity(Activity.playing("Music in " + api.awaitReady().getGuilds().size() +"+ servers!"));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
