@@ -107,17 +107,19 @@ public class TrackQueueService extends AudioEventAdapter {
     }
 
     public void buttonGetAi() {
-        for(String song : radioService.getAiSongRecommendations(queue,currentSong)) {
+        String[] songs = radioService.getAiSongRecommendations(queue,currentSong);
+        for(String song : songs) {
             loadSong(song);
         }
-        currentSong.getSongChannel().sendMessageEmbeds(config.getEmbedSongMessageService().addedAiSongs(radioService.getAiSongRecommendations(queue,currentSong))).queue();
+        currentSong.getSongChannel().sendMessageEmbeds(config.getEmbedSongMessageService().addedAiSongs(songs)).queue();
     }
 
     public void getAi(SlashCommandInteractionEvent event) {
-        for(String song : radioService.getAiSongRecommendations(queue,currentSong)) {
+        String[] songs = radioService.getAiSongRecommendations(queue,currentSong);
+        for(String song : songs) {
             loadSong(song);
         }
-        event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().addedAiSongs(radioService.getAiSongRecommendations(queue,currentSong))).queue();
+        event.getHook().sendMessageEmbeds(config.getEmbedSongMessageService().addedAiSongs(songs)).queue();
     }
 
 
